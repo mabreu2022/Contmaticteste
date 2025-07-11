@@ -21,6 +21,22 @@ Este projeto desenvolvido em Delphi realiza a busca de endereços a partir de um
 - 💨 Limpeza automática dos campos a cada nova consulta
 - ✋ Validação de entrada para permitir apenas números no campo CEP
 
+🧪 Testes implementados
+
+- `Test_CepTemTodosDigitosIguais_Valido` — garante que CEPs como `00000000` e `99999999` sejam identificados como inválidos
+- `Test_CepTemTodosDigitosIguais_Invalido` — confirma que CEPs como `12345678` passam normalmente
+- `Test_Limpar_Objetos` — verifica que todos os campos do formulário são limpos corretamente
+- `Test_ConsultarCEP_FallbackSimulado` — testa a lógica de fallback quando o CEP é inválido e não deve consultar outras APIs
+
+### ▶️ Como executar os testes
+
+1. Abra o projeto gerado pelo assistente DUnitX
+2. Certifique-se de que `Unit1.pas` está incluída no projeto de testes
+3. Compile e execute (`F9`)
+4. Visualize os resultados no DUnitX Runner (interface gráfica ou console)
+
+
+
 ⚙️ Requisitos
 - Delphi 10.x ou superior
 - Bibliotecas SSL:
