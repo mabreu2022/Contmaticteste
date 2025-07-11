@@ -36,6 +36,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
+
+  public
     function ConsultarCEP(const ACEP: string): TResultadoCEP;
     function TentarConsulta(const URL: string; Fonte: TFonteCep;
       CampoValidacao: string; out Resultado: TResultadoCEP): Boolean;
@@ -46,7 +48,6 @@ type
     procedure CarregarCEP_Awesome(JSON: TJSONObject);
     procedure Limpar_Objetos(pLimpaCep: Boolean = True);
     function GetNomeFonte(Fonte: TFonteCep): string;
-  public
   end;
 
 var
