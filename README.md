@@ -68,6 +68,7 @@ Basta modificar a sequência do array URLs[...] dentro da função ConsultarCEP 
 URLs[0] := 'https://viacep.com.br/ws/' + ACEP + '/json/';
 URLs[1] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' + Copy(ACEP, 6, 3) + '.json';
 URLs[2] := 'https://cep.awesomeapi.com.br/json/' + ACEP;
+`pascal```
 
 
 Por exemplo, para testar a ApiCEP como principal, basta trocar para:
@@ -76,6 +77,7 @@ Por exemplo, para testar a ApiCEP como principal, basta trocar para:
 URLs[0] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' + Copy(ACEP, 6, 3) + '.json';
 URLs[1] := 'https://viacep.com.br/ws/' + ACEP + '/json/';
 URLs[2] := 'https://cep.awesomeapi.com.br/json/' + ACEP;
+`pascal```
 
 
 Essa alteração é útil para:
