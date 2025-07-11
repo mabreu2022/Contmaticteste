@@ -9,7 +9,6 @@ __recovery/
 
 # Binários e temporários
 *.exe
-*.dll
 *.bpl
 *.dcp
 *.~pas
