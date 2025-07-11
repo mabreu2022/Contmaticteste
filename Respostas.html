@@ -2,20 +2,25 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Conceitos de Arquitetura MVC e Padrão SOLID</title>
+  <title>Respostas — Arquitetura MVC e Padrão SOLID</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      line-height: 1.6;
       margin: 40px;
+      line-height: 1.6;
+      background-color: #ffffff;
     }
     h1, h2 {
       color: #333;
     }
+    ul {
+      margin-top: 0;
+      padding-left: 20px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 15px;
     }
     th, td {
       border: 1px solid #ccc;
@@ -23,36 +28,39 @@
       text-align: left;
     }
     th {
-      background-color: #f2f2f2;
+      background-color: #f3f3f3;
     }
-    ul {
-      margin-top: 0;
+    hr {
+      margin: 30px 0;
     }
   </style>
 </head>
 <body>
 
-  <h1>Questão 1 — O que é arquitetura MVC</h1>
-  <p><strong>MVC</strong> significa <em>Model-View-Controller</em> e é uma forma de organizar as partes de um programa.</p>
+  <h1>Questão 1 — O que você entende por arquitetura MVC (em linguagem de leigo)</h1>
+
+  <p>A arquitetura <strong>MVC</strong> (Model-View-Controller) é como dividir um sistema em três partes para ele ficar mais organizado e fácil de mexer:</p>
+
   <ul>
-    <li><strong>Model (Modelo)</strong>: cuida dos dados e regras de negócio.</li>
-    <li><strong>View (Visualização)</strong>: é o que aparece na tela para o usuário.</li>
-    <li><strong>Controller (Controlador)</strong>: recebe as ações do usuário e controla o fluxo entre View e Model.</li>
+    <li><strong>Model (Modelo):</strong> cuida das informações e regras. Por exemplo, os dados de um cliente ou produto.</li>
+    <li><strong>View (Visualização):</strong> é o que aparece na tela para o usuário — botões, formulários, listas, etc.</li>
+    <li><strong>Controller (Controlador):</strong> interpreta os cliques e comandos do usuário e diz ao sistema o que fazer.</li>
   </ul>
-  <p>Isso torna o sistema mais organizado e facilita futuras alterações.</p>
+
+  <p>Separando assim, é possível mudar a aparência sem bagunçar os dados, ou alterar regras sem afetar o visual. Isso torna o sistema mais limpo, flexível e fácil de manter.</p>
 
   <hr>
 
-  <h1>Questão 2 — Padrão de Projeto: SOLID</h1>
+  <h1>Questão 2 — Escolha de padrão de projeto: SOLID</h1>
 
   <h2>Conceito</h2>
-  <p>SOLID é um conjunto de 5 princípios para escrever um código mais organizado, flexível e fácil de manter.</p>
+  <p><strong>SOLID</strong> é um conjunto de cinco princípios que ajudam a escrever códigos organizados, flexíveis e fáceis de manter. Ele guia como criar classes e funções que funcionam bem separadas umas das outras.</p>
 
-  <h2>Objetivo</h2>
+  <h2>Objetivos</h2>
   <ul>
-    <li>Evitar bagunça no código e acoplamento excessivo</li>
-    <li>Tornar o código extensível e reutilizável</li>
-    <li>Facilitar manutenção e evolução</li>
+    <li>Evitar que uma classe faça várias coisas ao mesmo tempo</li>
+    <li>Permitir que novas funcionalidades sejam adicionadas sem quebrar o que já funciona</li>
+    <li>Usar interfaces e abstrações para tornar o código mais reutilizável</li>
   </ul>
 
   <h2>Princípios SOLID</h2>
@@ -60,8 +68,8 @@
     <thead>
       <tr>
         <th>Sigla</th>
-        <th>Nome</th>
-        <th>Explicação prática</th>
+        <th>Princípio</th>
+        <th>Explicação simples</th>
       </tr>
     </thead>
     <tbody>
@@ -73,33 +81,38 @@
       <tr>
         <td>O</td>
         <td>Open/Closed</td>
-        <td>Deve ser aberta para extensão, mas fechada para modificação</td>
+        <td>Deve estar aberta para extensão, mas fechada para alteração</td>
       </tr>
       <tr>
         <td>L</td>
         <td>Liskov Substitution</td>
-        <td>Subclasses podem substituir classes-pai sem causar erros</td>
+        <td>Classes derivadas podem substituir as classes base sem problemas</td>
       </tr>
       <tr>
         <td>I</td>
         <td>Interface Segregation</td>
-        <td>Evita obrigar classes a implementarem métodos que não usam</td>
+        <td>Não forçar a implementação de métodos que a classe não precisa</td>
       </tr>
       <tr>
         <td>D</td>
         <td>Dependency Inversion</td>
-        <td>Dependa de abstrações, não de implementações concretas</td>
+        <td>Depender de abstrações em vez de detalhes concretos</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Cenário de uso</h2>
-  <p>Um sistema que exporta relatórios em PDF e Excel. Com SOLID:</p>
+  <h2>Exemplo prático — Sistema de Pagamentos</h2>
+
+  <p>Imagine um sistema que precisa lidar com diferentes formas de pagamento: boleto, cartão de crédito e Pix. Aplicando os princípios SOLID, o sistema poderia ser montado assim:</p>
+
   <ul>
-    <li>Cria-se uma interface <code>IExportador</code> com métodos genéricos.</li>
-    <li>Implementa-se <code>ExportadorPDF</code>, <code>ExportadorExcel</code> e pode-se criar outros no futuro.</li>
-    <li>Assim, novos formatos podem ser adicionados sem alterar o que já funciona.</li>
+    <li>Cria-se uma <strong>interface</strong> chamada <code>IMetodoPagamento</code> com o método <code>RealizarPagamento()</code>.</li>
+    <li>Cada tipo de pagamento é representado por uma classe: <code>PagamentoPorCartao</code>, <code>PagamentoPorPix</code>, etc.</li>
+    <li>Essas classes seguem a interface e têm suas próprias implementações.</li>
+    <li>Se surgir um novo método, como PayPal, basta criar uma nova classe sem mexer nas anteriores.</li>
   </ul>
+
+  <p>Esse exemplo usa todos os princípios SOLID de forma prática, promovendo manutenção fácil, código limpo e crescimento seguro.</p>
 
 </body>
 </html>
