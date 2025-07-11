@@ -1,0 +1,313 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, IdHTTP,
+  System.JSON, IdSSLOpenSSL, Vcl.ExtCtrls;
+
+type
+  TFonteCep = (fcIndefinida, fcViaCEP, fcApiCEP, fcAwesomeAPI);
+
+  TResultadoCEP = record
+    Fonte: TFonteCep;
+    JSON: TJSONObject;
+  end;
+
+  TFrmPrincipal = class(TForm)
+    edtCEP: TEdit;
+    Button1: TButton;
+    edtEndereco: TEdit;
+    edtBairro: TEdit;
+    EdtCidade: TEdit;
+    edtUF: TEdit;
+    EdtIBGE: TEdit;
+    lblEndereco: TLabel;
+    lblBairro: TLabel;
+    lblCidade: TLabel;
+    lblUF: TLabel;
+    lblIBGE: TLabel;
+    Label1: TLabel;
+    memoComplemento: TMemo;
+    lblComplemento: TLabel;
+    lblFonte: TLabel;
+    procedure Button1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+  private
+    function ConsultarCEP(const ACEP: string): TResultadoCEP;
+    function TentarConsulta(const URL: string; Fonte: TFonteCep;
+      CampoValidacao: string; out Resultado: TResultadoCEP): Boolean;
+    function CriarHTTPComTLS(apenasTLS12: Boolean): TIdHTTP;
+    function CepTemTodosDigitosIguais(const CEP: string): Boolean;
+    procedure CarregarCEP(JSON: TJSONObject);
+    procedure CarregarCEP_ApiCep(JSON: TJSONObject);
+    procedure CarregarCEP_Awesome(JSON: TJSONObject);
+    procedure Limpar_Objetos(pLimpaCep: Boolean = True);
+    function GetNomeFonte(Fonte: TFonteCep): string;
+  public
+  end;
+
+var
+  FrmPrincipal: TFrmPrincipal;
+
+implementation
+
+{$R *.dfm}
+
+              procedure TFrmPrincipal.Button1Click(Sender: TObject);
+var
+  Res: TResultadoCEP;
+begin
+  if not FileExists('libssl-1_1.dll') or not FileExists('libcrypto-1_1.dll') then
+  begin
+    ShowMessage('DLLs de SSL não encontradas! Certifique-se de que libssl-1_1.dll e libcrypto-1_1.dll estejam na mesma pasta do executável.');
+    Exit;
+  end;
+
+  if Length(edtCEP.Text) <> 8 then
+    ShowMessage('CEP inválido')
+  else
+  begin
+    Res := ConsultarCEP(edtCEP.Text);
+    if Assigned(Res.JSON) then
+    begin
+      case Res.Fonte of
+        fcViaCEP:     CarregarCEP(Res.JSON);
+        fcApiCEP:     CarregarCEP_ApiCep(Res.JSON);
+        fcAwesomeAPI: CarregarCEP_Awesome(Res.JSON);
+      end;
+      lblFonte.Caption := 'Fonte: ' + GetNomeFonte(Res.Fonte);
+    end
+    else
+      ShowMessage('Nenhum dado encontrado para esse CEP');
+  end;
+end;
+
+function TFrmPrincipal.ConsultarCEP(const ACEP: string): TResultadoCEP;
+begin
+  Result.Fonte := fcIndefinida;
+  Result.JSON := nil;
+
+  if TentarConsulta(
+    Format('https://viacep.com.br/ws/%s/json/', [ACEP]),
+    fcViaCEP, 'logradouro', Result) then Exit;
+
+  if TentarConsulta(
+    Format('https://cdn.apicep.com/file/apicep/%s.json', [ACEP]),
+    fcApiCEP, 'address', Result) then Exit;
+
+  //Bloqueio definitivo ANTES de montar a URL da AwesomeAPI
+  if CepTemTodosDigitosIguais(ACEP) then
+  begin
+    ShowMessage('A AwesomeAPI rejeita CEPs como "00000000", com todos os dígitos iguais. Consulta ignorada.');
+    Exit;
+  end;
+
+  if TentarConsulta(
+    Format('https://cep.awesomeapi.com.br/json/%s', [ACEP]),
+    fcAwesomeAPI, 'cep', Result) then Exit;
+end;
+
+function TFrmPrincipal.CepTemTodosDigitosIguais(const CEP: string): Boolean;
+begin
+  Result := (Length(CEP) = 8) and (CEP = StringOfChar(CEP[1], 8));
+end;
+
+function TFrmPrincipal.TentarConsulta(const URL: string; Fonte: TFonteCep;
+  CampoValidacao: string; out Resultado: TResultadoCEP): Boolean;
+var
+  lIdhttp: TIdHTTP;
+  lStream: TStringStream;
+  jsonValue: TJSONValue;
+  tempJson: TJSONObject;
+  cepExtraido: string;
+begin
+  Result := False;
+  Resultado.Fonte := fcIndefinida;
+  Resultado.JSON := nil;
+
+  //Bloqueio eficaz para a AwesomeAPI
+  if Fonte = fcAwesomeAPI then
+  begin
+    cepExtraido := Copy(URL, LastDelimiter('/', URL) + 1, 8);
+    if CepTemTodosDigitosIguais(cepExtraido) then
+    begin
+      ShowMessage('CEP com todos os dígitos iguais não é aceito pela AwesomeAPI. Consulta cancelada.');
+      Exit;
+    end;
+  end;
+
+  lIdhttp := CriarHTTPComTLS(Fonte = fcAwesomeAPI);
+  lStream := TStringStream.Create('');
+  try
+    try
+      //Aqui é onde a exceção 403 é disparada
+      lIdhttp.Get(URL, lStream);
+
+      if (lIdhttp.ResponseCode = 200) and (Trim(lStream.DataString) <> '') then
+      begin
+        jsonValue := TJSONObject.ParseJSONValue(lStream.DataString);
+        if Assigned(jsonValue) and (jsonValue is TJSONObject) then
+        begin
+          tempJson := TJSONObject(jsonValue);
+          if (CampoValidacao = '') or (tempJson.GetValue(CampoValidacao) <> nil) then
+          begin
+            Resultado.Fonte := Fonte;
+            Resultado.JSON := tempJson;
+            Result := True;
+          end
+          else
+            tempJson.Free;
+        end
+        else
+          jsonValue.Free;
+      end;
+    except
+      on E: EIdHTTPProtocolException do
+      begin
+        if E.ErrorCode = 403 then
+          ShowMessage('A API retornou erro 403 (Proibido). Verifique se o CEP é válido.')
+        else
+          ShowMessage('Erro HTTP: ' + IntToStr(E.ErrorCode) + ' - ' + E.Message);
+      end;
+    end;
+  finally
+    lStream.Free;
+    lIdhttp.Free;
+  end;
+end;
+
+function TFrmPrincipal.CriarHTTPComTLS(apenasTLS12: Boolean): TIdHTTP;
+var
+  http: TIdHTTP;
+  ssl: TIdSSLIOHandlerSocketOpenSSL;
+begin
+  http := TIdHTTP.Create(nil);
+  ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
+  if apenasTLS12 then
+    ssl.SSLOptions.SSLVersions := [sslvTLSv1_2]
+  else
+    ssl.SSLOptions.SSLVersions := [sslvTLSv1, sslvTLSv1_1, sslvTLSv1_2];
+
+  http.IOHandler := ssl;
+  Result := http;
+end;
+
+          procedure TFrmPrincipal.CarregarCEP(JSON: TJSONObject);
+var
+  jsonVal: TJSONValue;
+begin
+  Limpar_Objetos(False);
+
+  if JSON.TryGetValue('logradouro', jsonVal) then
+    edtEndereco.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('localidade', jsonVal) then
+    EdtCidade.Text := UpperCase(jsonVal.Value);
+
+  if JSON.TryGetValue('bairro', jsonVal) then
+    edtBairro.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('uf', jsonVal) then
+    edtUF.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('ibge', jsonVal) then
+    edtIBGE.Text := jsonVal.Value
+  else
+    edtIBGE.Text := '---';
+
+  if JSON.TryGetValue('complemento', jsonVal) then
+    memoComplemento.Lines.Text := jsonVal.Value;
+end;
+
+procedure TFrmPrincipal.CarregarCEP_ApiCep(JSON: TJSONObject);
+var
+  jsonVal: TJSONValue;
+begin
+  Limpar_Objetos(False);
+
+  if JSON.TryGetValue('address', jsonVal) then
+    edtEndereco.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('district', jsonVal) then
+    edtBairro.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('city', jsonVal) then
+    EdtCidade.Text := UpperCase(jsonVal.Value);
+
+  if JSON.TryGetValue('state', jsonVal) then
+    edtUF.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('code', jsonVal) then
+    edtCEP.Text := jsonVal.Value;
+
+  edtIBGE.Text := '---';
+  memoComplemento.Lines.Clear;
+end;
+
+procedure TFrmPrincipal.CarregarCEP_Awesome(JSON: TJSONObject);
+var
+  jsonVal: TJSONValue;
+begin
+  Limpar_Objetos(False);
+
+  if JSON.TryGetValue('address_name', jsonVal) then
+    edtEndereco.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('district', jsonVal) then
+    edtBairro.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('city', jsonVal) then
+    EdtCidade.Text := UpperCase(jsonVal.Value);
+
+  if JSON.TryGetValue('state', jsonVal) then
+    edtUF.Text := jsonVal.Value;
+
+  if JSON.TryGetValue('cep', jsonVal) then
+    edtCEP.Text := jsonVal.Value;
+
+  edtIBGE.Text := '---';
+  memoComplemento.Lines.Clear;
+end;
+
+function TFrmPrincipal.GetNomeFonte(Fonte: TFonteCep): string;
+begin
+  case Fonte of
+    fcViaCEP:     Result := 'ViaCEP';
+    fcApiCEP:     Result := 'ApiCEP';
+    fcAwesomeAPI: Result := 'AwesomeAPI';
+  else
+    Result := 'Indefinida';
+  end;
+end;
+
+procedure TFrmPrincipal.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if key <> #8 then
+    if not (key in ['0'..'9']) then
+      key := #0;
+end;
+
+procedure TFrmPrincipal.FormShow(Sender: TObject);
+begin
+  Limpar_Objetos;
+end;
+
+procedure TFrmPrincipal.Limpar_Objetos(pLimpaCep: Boolean);
+begin
+  if pLimpaCEP then
+    edtCEP.Text := '';
+
+  edtEndereco.Text := '';
+  edtBairro.Text   := '';
+  EdtCidade.Text   := '';
+  edtUF.Text       := '';
+  EdtIBGE.Text     := '';
+  memoComplemento.Lines.Clear;
+  lblFonte.Caption := '';
+end;
+
+end.
+
