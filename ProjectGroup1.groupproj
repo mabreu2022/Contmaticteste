@@ -9,6 +9,9 @@
         <Projects Include="tests\TestDunitx.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="API\CEPAPI.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="TestDunitx:Make">
         <MSBuild Projects="tests\TestDunitx.dproj" Targets="Make"/>
     </Target>
+    <Target Name="CEPAPI">
+        <MSBuild Projects="API\CEPAPI.dproj"/>
+    </Target>
+    <Target Name="CEPAPI:Clean">
+        <MSBuild Projects="API\CEPAPI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="CEPAPI:Make">
+        <MSBuild Projects="API\CEPAPI.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="ClientVCL;TestDunitx"/>
+        <CallTarget Targets="ClientVCL;TestDunitx;CEPAPI"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ClientVCL:Clean;TestDunitx:Clean"/>
+        <CallTarget Targets="ClientVCL:Clean;TestDunitx:Clean;CEPAPI:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ClientVCL:Make;TestDunitx:Make"/>
+        <CallTarget Targets="ClientVCL:Make;TestDunitx:Make;CEPAPI:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
