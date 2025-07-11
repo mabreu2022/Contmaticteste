@@ -127,6 +127,8 @@
             <Form>FrmPrincipal</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Model\EnderecoModel.pas"/>
+        <DCCReference Include="Controller\CEPController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

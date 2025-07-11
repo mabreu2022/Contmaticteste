@@ -2,7 +2,9 @@ program ClientVCL;
 
 uses
   Vcl.Forms,
-  Unit1 in 'Unit1.pas' {FrmPrincipal};
+  Unit1 in 'Unit1.pas' {FrmPrincipal},
+  EnderecoModel in 'Model\EnderecoModel.pas',
+  CEPController in 'Controller\CEPController.pas';
 
 {$R *.res}
 

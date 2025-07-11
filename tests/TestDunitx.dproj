@@ -114,11 +114,9 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="TestUnitPrincipal.pas"/>
-        <DCCReference Include="..\Unit1.pas">
-            <Form>FrmPrincipal</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
+        <DCCReference Include="TestCEPController.pas"/>
+        <DCCReference Include="..\Controller\CEPController.pas"/>
+        <DCCReference Include="..\Model\EnderecoModel.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -12,8 +12,6 @@ object FrmPrincipal: TFrmPrincipal
   Font.Style = []
   KeyPreview = True
   Position = poScreenCenter
-  OnKeyPress = FormKeyPress
-  OnShow = FormShow
   TextHeight = 15
   object lblEndereco: TLabel
     Left = 8
@@ -78,49 +76,40 @@ object FrmPrincipal: TFrmPrincipal
     Height = 23
     TabOrder = 0
   end
-  object btnConsultaCEP: TButton
-    Left = 134
-    Top = 37
-    Width = 91
-    Height = 25
-    Caption = 'Consulta CEP'
-    TabOrder = 1
-    OnClick = btnConsultaCEPClick
-  end
   object edtEndereco: TEdit
     Left = 104
     Top = 104
     Width = 209
     Height = 23
-    TabOrder = 2
+    TabOrder = 1
   end
   object edtBairro: TEdit
     Left = 104
     Top = 133
     Width = 209
     Height = 23
-    TabOrder = 3
+    TabOrder = 2
   end
   object EdtCidade: TEdit
     Left = 104
     Top = 162
     Width = 209
     Height = 23
-    TabOrder = 4
+    TabOrder = 3
   end
   object edtUF: TEdit
     Left = 104
     Top = 191
     Width = 49
     Height = 23
-    TabOrder = 5
+    TabOrder = 4
   end
   object EdtIBGE: TEdit
     Left = 104
     Top = 220
     Width = 121
     Height = 23
-    TabOrder = 6
+    TabOrder = 5
   end
   object memoComplemento: TMemo
     Left = 402
@@ -129,6 +118,15 @@ object FrmPrincipal: TFrmPrincipal
     Height = 89
     Lines.Strings = (
       '')
+    TabOrder = 6
+  end
+  object btnBuscarClick: TButton
+    Left = 134
+    Top = 37
+    Width = 91
+    Height = 25
+    Caption = 'Consulta CEP'
     TabOrder = 7
+    OnClick = btnBuscarClickClick
   end
 end
