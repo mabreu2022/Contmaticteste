@@ -64,18 +64,23 @@ Essa abordagem usa fallback automático: assim que uma API retorna dados válido
 🛠️ Para alterar a ordem de prioridade das APIs
 Basta modificar a sequência do array URLs[...] dentro da função ConsultarCEP no arquivo CEPController.pas:
 
-```pascal
+<pre lang="pascal">
+
 URLs[0] := 'https://viacep.com.br/ws/' + ACEP + '/json/';
 URLs[1] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' + Copy(ACEP, 6, 3) + '.json';
 URLs[2] := 'https://cep.awesomeapi.com.br/json/' + ACEP;
+</pre>
 
 
 Por exemplo, para testar a ApiCEP como principal, basta trocar para:
 
-```pascal
+<pre lang="pascal">
+  
 URLs[0] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' + Copy(ACEP, 6, 3) + '.json';
 URLs[1] := 'https://viacep.com.br/ws/' + ACEP + '/json/';
 URLs[2] := 'https://cep.awesomeapi.com.br/json/' + ACEP;
+
+</pre>
 
 
 Essa alteração é útil para:
@@ -84,7 +89,6 @@ Essa alteração é útil para:
 - Validar formatos diferentes de retorno JSON
 
 📌 Lembre-se de retornar à ordem original se quiser restaurar o comportamento de fallback padrão.
-
 
 ⚙️ Requisitos
 - Delphi 10.x ou superior
@@ -100,5 +104,41 @@ Essa alteração é útil para:
 - TentarConsulta(...): realiza chamada HTTP e valida dados JSON retornados
 - CarregarCEP*: popula os campos do formulário com os dados recebidos
 - CepTemTodosDigitosIguais(...): bloqueia CEPs inválidos antes de chamar APIs sensíveis
+
+# 📦 API de Consulta de CEP
+
+Esta é uma API RESTful desenvolvida com [Horse Framework](https://github.com/HashLoad/horse), que realiza consultas de CEP usando múltiplas fontes como ViaCEP, ApiCEP e AwesomeAPI. A documentação é gerada automaticamente via [GBSwagger](https://github.com/HashLoad/horse-gbswagger).
+
+---
+
+## 🚀 Como executar
+
+### Pré-requisitos
+
+- Delphi 10.4 ou superior
+- Boss CLI (para instalar dependências)
+- OpenSSL DLLs (se usar HTTPS com `TIdSSLIOHandlerSocketOpenSSL`)
+
+
+## 📘 Documentação via Swagger
+Acesse:
+
+Interface Swagger UI: http://localhost:9000/swagger/doc/html
+
+JSON da documentação: http://localhost:9000/swagger/doc/json
+
+🔧 Endpoint disponível
+GET /cep/{numero}
+Consulta um CEP específico e retorna informações de endereço.
+
+## 📘 Parâmetros
+
+Nome	Tipo	Obrigatório	Descrição
+numero	string	✅	CEP no formato somente dígitos (ex: 01001000)
+Respostas
+Código	Descrição	Modelo
+200	Endereço encontrado com sucesso	TEndereco
+404	CEP inválido ou não encontrado	Mensagem de erro simples
+
 
 
