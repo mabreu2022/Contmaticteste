@@ -1,0 +1,40 @@
+# Pastas de build
+Win32/
+Win64/
+__history/
+__recovery/
+.dcc/
+.dcu/
+.dsk/
+
+# Binários e temporários
+*.exe
+*.dll
+*.bpl
+*.dcp
+*.~pas
+*.~dfm
+*.~fmx
+*.bak
+*.log
+*.map
+*.tds
+
+# Arquivos de IDE e configurações locais
+*.local
+*.identcache
+*.ipch
+*.pch
+*.rsp
+*.ncb
+*.sdf
+*.aps
+*.vscode/
+
+# Configurações do repositório e sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos específicos do Git
+*.orig
