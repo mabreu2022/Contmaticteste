@@ -1,6 +1,7 @@
 object FrmPrincipal: TFrmPrincipal
   Left = 0
   Top = 0
+  BorderStyle = bsSingle
   Caption = 'Consultar CEP'
   ClientHeight = 252
   ClientWidth = 605

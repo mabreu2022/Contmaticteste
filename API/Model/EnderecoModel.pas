@@ -2,7 +2,10 @@ unit EnderecoModel;
 
 interface
 
-{$RTTI EXPLICIT METHODS([vcPublic]) PROPERTIES([vcPublic])}
+//{$RTTI EXPLICIT METHODS([vcPublic]) PROPERTIES([vcPublished])}
+//{$RTTI EXPLICIT METHODS([vcPublic]) PROPERTIES([vcPublished])}
+{$RTTI EXPLICIT METHODS([vcPublished]) PROPERTIES([vcPublished])}
+
 
 type
   TEndereco = class

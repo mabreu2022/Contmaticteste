@@ -1,0 +1,88 @@
+{
+  "info": {
+    "_postman_id": "00112233-cep-teste-collection",
+    "name": "Teste APIs CEP (com cabeçalhos simulados)",
+    "description": "Testa ApiCEP, ViaCEP e AwesomeAPI com headers simulando navegador",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "ApiCEP",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "User-Agent",
+            "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept-Encoding",
+            "value": "gzip, deflate, br"
+          },
+          {
+            "key": "Accept-Language",
+            "value": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
+          },
+          {
+            "key": "Connection",
+            "value": "keep-alive"
+          }
+        ],
+        "url": {
+          "raw": "https://cdn.apicep.com/file/apicep/01001-000.json",
+          "protocol": "https",
+          "host": ["cdn", "apicep", "com"],
+          "path": ["file", "apicep", "01001-000.json"]
+        }
+      }
+    },
+    {
+      "name": "ViaCEP",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "User-Agent",
+            "value": "Delphi VCL Client"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://viacep.com.br/ws/01001000/json/",
+          "protocol": "https",
+          "host": ["viacep", "com", "br"],
+          "path": ["ws", "01001000", "json", ""]
+        }
+      }
+    },
+    {
+      "name": "AwesomeAPI",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "User-Agent",
+            "value": "Delphi VCL Client"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://cep.awesomeapi.com.br/json/01001000",
+          "protocol": "https",
+          "host": ["cep", "awesomeapi", "com", "br"],
+          "path": ["json", "01001000"]
+        }
+      }
+    }
+  ]
+}
