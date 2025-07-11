@@ -63,13 +63,16 @@ A função ConsultarCEP(...) realiza consultas de CEP utilizando três APIs púb
 Essa abordagem usa fallback automático: assim que uma API retorna dados válidos, o processo é encerrado e o resultado é entregue ao formulário.
 🛠️ Para alterar a ordem de prioridade das APIs
 Basta modificar a sequência do array URLs[...] dentro da função ConsultarCEP no arquivo CEPController.pas:
-´´´pascal
+
+```pascal
 URLs[0] := 'https://viacep.com.br/ws/' + ACEP + '/json/';
 URLs[1] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' + Copy(ACEP, 6, 3) + '.json';
 URLs[2] := 'https://cep.awesomeapi.com.br/json/' + ACEP;
 
 
 Por exemplo, para testar a ApiCEP como principal, basta trocar para:
+
+```pascal
 URLs[0] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' + Copy(ACEP, 6, 3) + '.json';
 URLs[1] := 'https://viacep.com.br/ws/' + ACEP + '/json/';
 URLs[2] := 'https://cep.awesomeapi.com.br/json/' + ACEP;
