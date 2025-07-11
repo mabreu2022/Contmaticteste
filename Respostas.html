@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Conceitos de Arquitetura MVC e Padrão SOLID</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 40px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    ul {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Questão 1 — O que é arquitetura MVC</h1>
+  <p><strong>MVC</strong> significa <em>Model-View-Controller</em> e é uma forma de organizar as partes de um programa.</p>
+  <ul>
+    <li><strong>Model (Modelo)</strong>: cuida dos dados e regras de negócio.</li>
+    <li><strong>View (Visualização)</strong>: é o que aparece na tela para o usuário.</li>
+    <li><strong>Controller (Controlador)</strong>: recebe as ações do usuário e controla o fluxo entre View e Model.</li>
+  </ul>
+  <p>Isso torna o sistema mais organizado e facilita futuras alterações.</p>
+
+  <hr>
+
+  <h1>Questão 2 — Padrão de Projeto: SOLID</h1>
+
+  <h2>Conceito</h2>
+  <p>SOLID é um conjunto de 5 princípios para escrever um código mais organizado, flexível e fácil de manter.</p>
+
+  <h2>Objetivo</h2>
+  <ul>
+    <li>Evitar bagunça no código e acoplamento excessivo</li>
+    <li>Tornar o código extensível e reutilizável</li>
+    <li>Facilitar manutenção e evolução</li>
+  </ul>
+
+  <h2>Princípios SOLID</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Sigla</th>
+        <th>Nome</th>
+        <th>Explicação prática</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>S</td>
+        <td>Single Responsibility</td>
+        <td>Uma classe deve ter apenas uma responsabilidade</td>
+      </tr>
+      <tr>
+        <td>O</td>
+        <td>Open/Closed</td>
+        <td>Deve ser aberta para extensão, mas fechada para modificação</td>
+      </tr>
+      <tr>
+        <td>L</td>
+        <td>Liskov Substitution</td>
+        <td>Subclasses podem substituir classes-pai sem causar erros</td>
+      </tr>
+      <tr>
+        <td>I</td>
+        <td>Interface Segregation</td>
+        <td>Evita obrigar classes a implementarem métodos que não usam</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>Dependency Inversion</td>
+        <td>Dependa de abstrações, não de implementações concretas</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Cenário de uso</h2>
+  <p>Um sistema que exporta relatórios em PDF e Excel. Com SOLID:</p>
+  <ul>
+    <li>Cria-se uma interface <code>IExportador</code> com métodos genéricos.</li>
+    <li>Implementa-se <code>ExportadorPDF</code>, <code>ExportadorExcel</code> e pode-se criar outros no futuro.</li>
+    <li>Assim, novos formatos podem ser adicionados sem alterar o que já funciona.</li>
+  </ul>
+
+</body>
+</html>
