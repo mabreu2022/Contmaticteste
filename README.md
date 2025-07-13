@@ -93,7 +93,7 @@ Essa alteração é útil para:
 ⚙️ Requisitos
 - Delphi 10.x ou superior
 - Bibliotecas SSL:
-- libssl-1_1.dll
+- libssl-1_1.dll https://sourceforge.net/projects/openssl-for-windows/files/OpenSSL-1.1.1q_win32.zip/download
 - libcrypto-1_1.dll
 - Componentes:
 - TIdHTTP
