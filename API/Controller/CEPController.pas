@@ -59,14 +59,11 @@ begin
   Endereco := ConsultarCEPInterno(ACEP);
 
   if Assigned(Endereco) then
-  begin
-    FResponse.ContentType('application/json; charset=utf-8')
-             .Status(200)
-             .Send<TEndereco>(Endereco);
-  end
+     FResponse.ContentType('application/json; charset=utf-8')
+         .Status(200)
+         .Send(TJson.ObjectToJsonString(Endereco))
   else
     FResponse.Status(404).Send('CEP inválido ou não encontrado');
-
 end;
 
 function TCEPController.ConsultarCEPInterno(const ACEP: string): TEndereco;

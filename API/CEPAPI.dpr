@@ -31,7 +31,6 @@ begin
     .URL('https://github.com/mabreu2022')
     .&End.&End;
 
-  // Registrar o controller
   THorseGBSwaggerRegister.RegisterPath(TCEPController);
 
 end;
