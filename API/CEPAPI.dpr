@@ -9,45 +9,57 @@ uses
   Horse.GBSwagger,
   GBSwagger.Model.Config,
   Horse.GBSwagger.Register,
+  GBSwagger.Model.Path,
+  GBSwagger.Model.Info,
   CEPController in 'Controller\CEPController.pas',
   EnderecoModel in 'Model\EnderecoModel.pas';
+
+// NOVO CÓDIGO - Adicione isso no seu DPR
+type
+  [SwagPath('testeswagger', 'Testes de Rota Básica')]
+  TSimpleTestController = class
+  public
+    [SwagGET('/hello')]
+    [SwagResponse(200, 'Mensagem de Olá')]
+    procedure HelloHandler(Req: THorseRequest; Res: THorseResponse; Next: TNextProc);
+  end;
+
+procedure TSimpleTestController.HelloHandler(Req: THorseRequest; Res: THorseResponse; Next: TNextProc);
+begin
+  Res.Send('Hello from SimpleTestController!');
+end;
+// FIM DO NOVO CÓDIGO
 
 procedure RegisterRoutes;
 var
   Controller: TCEPController;
+  _ : string;
 begin
-  // Middleware
-  THorse
-    .Use(HorseSwagger('/swagger/doc/html', '/swagger/doc/json'))
-    .Use(CORS)
-    .Use(Jhonson);
+  THorse.Use(CORS)
+        .Use(Jhonson)
+        .Use(HorseSwagger('/swagger/doc/html', '/swagger/doc/json'));
 
-  // Swagger Info
-  Swagger
-    .Info
-      .Title('API de Consulta de CEP')
-      .Description('Documentação automática gerada com GBSwagger')
-      .Version('1.0.0')
-      .Contact
-        .Name('Mauricio Abreu')
-        .Email('conectsolutions@hotmail.com')
-        .URL('https://github.com/mabreu2022')
-      .&End
-    .&End;
+  Swagger.Info
+    .Title('API de Consulta de CEP')
+    .Description('Documentação automática gerada com GBSwagger')
+    .Version('1.0.0')
+    .Contact.Name('Mauricio Abreu')
+    .Email('conectsolutions@hotmail.com')
+    .URL('https://github.com/mabreu2022')
+    .&End.&End;
 
-  // Registra Controller no Swagger
+    // Força o Delphi a incluir TEndereco no executável (previne o otimizador de remover)
+  _ := TEndereco.ClassName;
+
+  // Registrar o controller
   THorseGBSwaggerRegister.RegisterPath(TCEPController);
 
-  // Instancia a controller
-  Controller := TCEPController.Create;
-
-  //Aqui está a linha que FALTAVA:
-//  THorse.Get('/cep/:numero', Controller.ConsultarCEP);
 end;
 
 
 begin
+
   RegisterRoutes;
   THorse.Listen(9000);
-end.
 
+end.

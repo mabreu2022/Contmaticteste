@@ -15,6 +15,7 @@ uses
 
 type
   EHorseCallbackInterrupted = class(Exception)
+  public
     constructor Create; reintroduce; overload;
     constructor Create(const AMessage: string); reintroduce; overload;
   end;

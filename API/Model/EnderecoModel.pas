@@ -2,12 +2,11 @@ unit EnderecoModel;
 
 interface
 
-//{$RTTI EXPLICIT METHODS([vcPublic]) PROPERTIES([vcPublished])}
-//{$RTTI EXPLICIT METHODS([vcPublic]) PROPERTIES([vcPublished])}
-{$RTTI EXPLICIT METHODS([vcPublished]) PROPERTIES([vcPublished])}
-
+uses
+  GBSwagger.Model.Attributes;
 
 type
+  [SwagObject('Modelo de Endereço retornado pela API')]
   TEndereco = class
   private
     FLogradouro: string;
@@ -17,24 +16,27 @@ type
     FComplemento: string;
     FIBGE: string;
     FFonte: string;
-    FCep: string;
-    FDdd: string;
-    FEstado: string;
-    FGia: string;
-    FSiafi: string;
   published
+    [SwagProp('Logradouro', 'string')]
     property Logradouro: string read FLogradouro write FLogradouro;
+
+    [SwagProp('Bairro', 'string')]
     property Bairro: string read FBairro write FBairro;
+
+    [SwagProp('Cidade', 'string')]
     property Cidade: string read FCidade write FCidade;
+
+    [SwagProp('UF (Unidade Federativa)', 'string')]
     property UF: string read FUF write FUF;
+
+    [SwagProp('Complemento', 'string')]
     property Complemento: string read FComplemento write FComplemento;
+
+    [SwagProp('Código IBGE do município', 'string')]
     property IBGE: string read FIBGE write FIBGE;
+
+    [SwagProp('Fonte da consulta do CEP', 'string')]
     property Fonte: string read FFonte write FFonte;
-    property Cep: string read FCep write FCep;
-    property Ddd: string read FDdd write FDdd;
-    property Estado: string read FEstado write FEstado;
-    property Gia: string read FGia write FGia;
-    property Siafi: string read FSiafi write FSiafi;
   end;
 
 implementation

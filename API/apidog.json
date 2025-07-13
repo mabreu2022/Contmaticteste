@@ -1,0 +1,96 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Consulta de CEP",
+    "description": "Documentação automática gerada a partir da API Delphi + Horse",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Mauricio Abreu",
+      "email": "conectsolutions@hotmail.com",
+      "url": "https://github.com/mabreu2022"
+    }
+  },
+  "paths": {
+    "/cep/{numero}": {
+      "get": {
+        "summary": "Consulta endereço pelo número do CEP",
+        "tags": ["Consulta de CEP"],
+        "parameters": [
+          {
+            "name": "numero",
+            "in": "path",
+            "description": "Número do CEP (8 dígitos)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta realizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TEndereco"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "CEP inválido ou não encontrado"
+          }
+        }
+      }
+    },
+    "/teste": {
+      "get": {
+        "summary": "Rota de teste para validar Swagger",
+        "tags": ["Consulta de CEP"],
+        "responses": {
+          "200": {
+            "description": "Olá, Swagger!"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TEndereco": {
+        "type": "object",
+        "description": "Modelo de Endereço retornado pela API",
+        "properties": {
+          "Logradouro": {
+            "type": "string",
+            "description": "Logradouro"
+          },
+          "Bairro": {
+            "type": "string",
+            "description": "Bairro"
+          },
+          "Cidade": {
+            "type": "string",
+            "description": "Cidade"
+          },
+          "UF": {
+            "type": "string",
+            "description": "UF (Unidade Federativa)"
+          },
+          "Complemento": {
+            "type": "string",
+            "description": "Complemento"
+          },
+          "IBGE": {
+            "type": "string",
+            "description": "Código IBGE do município"
+          },
+          "Fonte": {
+            "type": "string",
+            "description": "Fonte da consulta do CEP"
+          }
+        }
+      }
+    }
+  }
+}
