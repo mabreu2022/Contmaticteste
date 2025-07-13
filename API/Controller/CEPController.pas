@@ -20,15 +20,15 @@ uses
   GBSwagger.Path.Attributes;
 
 type
+
   [SwagPath('cep', 'Consulta de CEP')]
   TCEPController = class(THorseGBSwagger)
   published
-    [SwagGET('cep/{numero}', 'Consulta endereço pelo número do CEP')]
+    [SwagGET('{numero}', 'Consulta endereço pelo número do CEP')]
     [SwagParamPath('numero', 'Número do CEP (8 dígitos)', True)]
     [SwagResponse(200, TEndereco, 'Consulta realizada com sucesso')]
     [SwagResponse(404, 'CEP inválido ou não encontrado')]
     procedure ConsultarCEPHandler;
-
 
   public
     function CepTemTodosDigitosIguais(const CEP: string): Boolean;
@@ -36,7 +36,6 @@ type
   end;
 
 implementation
-
 
 function TCEPController.CepTemTodosDigitosIguais(const CEP: string): Boolean;
 begin
@@ -47,6 +46,7 @@ procedure TCEPController.ConsultarCEPHandler;
 var
   ACEP: string;
   Endereco: TEndereco;
+
 begin
   ACEP := FRequest.Params['numero'];
 
@@ -59,10 +59,14 @@ begin
   Endereco := ConsultarCEPInterno(ACEP);
 
   if Assigned(Endereco) then
-    //Res.Status(200).Send(TJson.ObjectToJsonString(Endereco))
-    FResponse.Status(200).Send<TEndereco>(Endereco)
+  begin
+    FResponse.ContentType('application/json; charset=utf-8')
+             .Status(200)
+             .Send<TEndereco>(Endereco);
+  end
   else
     FResponse.Status(404).Send('CEP inválido ou não encontrado');
+
 end;
 
 function TCEPController.ConsultarCEPInterno(const ACEP: string): TEndereco;
@@ -84,7 +88,8 @@ begin
   // Ordem de consulta: AwesomeAPI, ViaCEP, ApiCEP
   URLs[0] := 'https://cep.awesomeapi.com.br/json/' + ACEP;
   URLs[1] := 'https://viacep.com.br/ws/' + ACEP + '/json/';
-  URLs[2] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' + Copy(ACEP, 6, 3) + '.json';
+  URLs[2] := 'https://cdn.apicep.com/file/apicep/' + Copy(ACEP, 1, 5) + '-' +
+    Copy(ACEP, 6, 3) + '.json';
 
   HTTP := TIdHTTP.Create(nil);
   SSL := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
@@ -101,7 +106,8 @@ begin
       // Cabeçalhos simulando navegador real para ApiCEP
       if i = 2 then
       begin
-        HTTP.Request.UserAgent := 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36';
+        HTTP.Request.UserAgent :=
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36';
         HTTP.Request.Accept := 'application/json';
         HTTP.Request.AcceptEncoding := 'gzip, deflate, br';
         HTTP.Request.AcceptLanguage := 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7';
@@ -120,24 +126,32 @@ begin
         Response := HTTP.Get(URLs[i]);
         JSON := TJSONObject.ParseJSONValue(Response) as TJSONObject;
 
-        if Assigned(JSON) and ((not JSON.TryGetValue('erro', Response)) or (JSON.ToString <> '')) then
+        if Assigned(JSON) and ((not JSON.TryGetValue('erro', Response)) or
+          (JSON.ToString <> '')) then
         begin
           Result := TEndereco.Create;
 
           case i of
-            0: Fonte := 'AwesomeAPI';
-            1: Fonte := 'ViaCEP';
-            2: Fonte := 'ApiCEP';
+            0:
+              Fonte := 'AwesomeAPI';
+            1:
+              Fonte := 'ViaCEP';
+            2:
+              Fonte := 'ApiCEP';
           end;
           Result.Fonte := Fonte;
 
           // Mapeamento flexível por origem
-          Result.Logradouro := JSON.GetValue('logradouro', JSON.GetValue('address_type', ''));
-          Result.Bairro     := JSON.GetValue('bairro', JSON.GetValue('district', ''));
-          Result.Cidade     := JSON.GetValue('localidade', JSON.GetValue('city', ''));
-          Result.UF         := JSON.GetValue('uf', JSON.GetValue('state', ''));
-          Result.Complemento:= JSON.GetValue('complemento', JSON.GetValue('address', ''));
-          Result.IBGE       := JSON.GetValue('ibge', '');
+          Result.Logradouro := JSON.GetValue('logradouro',
+            JSON.GetValue('address_type', ''));
+          Result.Bairro := JSON.GetValue('bairro',
+            JSON.GetValue('district', ''));
+          Result.Cidade := JSON.GetValue('localidade',
+            JSON.GetValue('city', ''));
+          Result.UF := JSON.GetValue('uf', JSON.GetValue('state', ''));
+          Result.Complemento := JSON.GetValue('complemento',
+            JSON.GetValue('address', ''));
+          Result.IBGE := JSON.GetValue('ibge', '');
 
           JSON.Free;
           Break;
@@ -145,7 +159,8 @@ begin
       except
         on E: Exception do
         begin
-          // Ignorar falha e tentar próxima
+          Writeln(Format('Erro ao consultar %s: %s', [URLs[i], E.Message]));
+          Continue;
         end;
       end;
     end;
